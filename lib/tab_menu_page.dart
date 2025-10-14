@@ -77,9 +77,10 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
             automaticallyImplyLeading: false,
             leading: GestureDetector(
               onTap: () {
-                setState(() {
-                  _currentIndex = 3; // ไปหน้าโปรไฟล์เมื่อกดรูป
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfilePage()),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -140,10 +141,9 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
             onTap: (i) => setState(() => _currentIndex = i),
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.monetization_on), label: 'TTcoin'),
+              BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'TTcoin'),
               BottomNavigationBarItem(icon: Icon(Icons.local_offer), label: 'Promotion'),
-              BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+              // Profile tab removed
             ],
           ),
 
