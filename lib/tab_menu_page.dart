@@ -150,10 +150,8 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
           // ถ้าต้องการปุ่มสแกน BLE ให้แสดงปุ่มด้านล่าง (ไม่จำเป็นต้องมี)
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
-              // เรียกฟังก์ชันเชื่อม BLE (ต้องมี BluetoothService และ method connectAndRequestCoin)
               try {
                 await _bluetoothService.connectAndRequestCoin(widget.username);
-                // หลังได้ coin จะเก็บใน SharedPreferences — รีโหลดหน้า TTcoin tab ได้โดยการ setState()
                 setState(() {});
               } catch (e) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -164,7 +162,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
             icon: const Icon(Icons.bluetooth_searching),
             label: const Text('Scan & Get TTcoin'),
           ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );
       },
     );
