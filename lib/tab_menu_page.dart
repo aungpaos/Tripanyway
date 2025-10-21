@@ -8,11 +8,15 @@ import 'settings_page.dart';
 import 'bluetooth_service.dart'; // ถ้าใช้ปุ่มสแกน BLE (ไม่จำเป็นถ้าไม่มีไฟล์นี้)
 
 class TabMenuPage extends StatefulWidget {
+  final ValueNotifier<ThemeMode> themeNotifier;
+  final ValueNotifier<bool> notificationNotifier;
   final String username;
   final String avatarUrl;
 
   const TabMenuPage({
     super.key,
+    required this.themeNotifier,
+    required this.notificationNotifier,
     required this.username,
     required this.avatarUrl,
   });
@@ -24,18 +28,11 @@ class TabMenuPage extends StatefulWidget {
 class _TabMenuPageState extends State<TabMenuPage> {
   int _currentIndex = 0;
 
-  // Notifier ที่ตรงกับ SettingsPage (ตามไฟล์ settings_page.dart ของคุณ)
-  final ValueNotifier<ThemeMode> themeNotifier =
-      ValueNotifier<ThemeMode>(ThemeMode.light);
-  final ValueNotifier<bool> notificationNotifier = ValueNotifier<bool>(true);
-
   // avatar local
   late String avatarUrl;
 
   // (ถ้าคุณมี BluetoothService ให้ uncomment และใช้งาน)
-final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
-
-
+  final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
   @override
   void initState() {
@@ -45,8 +42,8 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
   @override
   void dispose() {
-    themeNotifier.dispose();
-    notificationNotifier.dispose();
+    // ไม่ควร dispose Notifier ที่สร้างจาก main.dart
+    // super.dispose();
     super.dispose();
   }
 
@@ -59,7 +56,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
       const HomeFeed(),
       TTcoinTab(username: widget.username), // ต้องมี constructor รับ username
       const PromoFeedPage(),
-      const ProfilePage(),
+      ProfilePage(), // ถ้าต้องการส่ง username/ avatarUrl ให้เพิ่มใน constructor
     ];
 
     // safety index
@@ -67,7 +64,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
         (_currentIndex >= 0 && _currentIndex < pages.length) ? _currentIndex : 0;
 
     return ValueListenableBuilder<ThemeMode>(
-      valueListenable: themeNotifier,
+      valueListenable: widget.themeNotifier,
       builder: (context, mode, _) {
         // ถ้าต้องการให้หน้าเปลี่ยนธีมจริง ๆ ในระดับ TabMenuPage,
         // คุณอาจต้องให้ MaterialApp หลักฟังค่า notifier ด้วย (แก้ใน main.dart)
@@ -79,7 +76,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => const ProfilePage()),
+                  MaterialPageRoute(builder: (_) => ProfilePage()),
                 );
               },
               child: Padding(
@@ -95,7 +92,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
             actions: [
               // ปุ่มแจ้งเตือน (จะอ่านค่า notificationNotifier ได้)
               ValueListenableBuilder<bool>(
-                valueListenable: notificationNotifier,
+                valueListenable: widget.notificationNotifier,
                 builder: (context, enabled, _) {
                   return IconButton(
                     icon: Image.asset('assets/images/icon4.png', width: 24, height: 24),
@@ -116,14 +113,14 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
               // ปุ่ม Settings — ส่งทั้ง 2 notifiers ตามที่ SettingsPage ต้องการ
               IconButton(
-                icon: const Icon(Icons.settings, color: Color.fromARGB(255, 188, 240, 180)),
+                icon: const Icon(Icons.settings),
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => SettingsPage(
-                        themeNotifier: themeNotifier,
-                        notificationNotifier: notificationNotifier,
+                        themeNotifier: widget.themeNotifier,
+                        notificationNotifier: widget.notificationNotifier,
                       ),
                     ),
                   );
@@ -136,8 +133,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: safeIndex,
-            selectedItemColor: mainGreen,
-            unselectedItemColor: Colors.grey,
+            // ลบ selectedItemColor และ unselectedItemColor ออก
             onTap: (i) => setState(() => _currentIndex = i),
             items: [
               BottomNavigationBarItem(
@@ -152,7 +148,6 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
                 icon: Image.asset('assets/images/icon3.png', width: 24, height: 24),
                 label: 'Promotion',
               ),
-              // Profile tab removed
             ],
           ),
 

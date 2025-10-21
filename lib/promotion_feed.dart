@@ -106,13 +106,18 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
                 height: 120,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFFE0E0E0)),
+                  border: Border.all(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color.fromARGB(255, 97, 97, 97)!
+                        : const Color.fromARGB(255, 224, 224, 224),
+                  ),
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor, // ใช้สีตามธีม
                   boxShadow: [
                     BoxShadow(
-                      // ignore: deprecated_member_use
-                      color: Colors.black.withOpacity(0.05),
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? const Color.fromARGB(169, 0, 0, 0).withOpacity(0.15)
+                          : Colors.black.withOpacity(0.05),
                       blurRadius: 4,
                       offset: const Offset(2, 2),
                     )
@@ -141,10 +146,17 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
                           Text(promo.title,
                               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                           const SizedBox(height: 6),
-                          Text(promo.description,
-                              style: const TextStyle(fontSize: 13, color: Colors.black54),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis),
+                          Text(
+                            promo.description,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : Colors.grey[800],
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           const SizedBox(height: 6),
                           Text("ราคา: ${promo.price} บาท",
                               style: const TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold)),

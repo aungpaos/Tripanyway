@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'signup_page.dart';
 import 'forgot_password_page.dart';
 import 'tab_menu_page.dart';
+import 'main.dart'; // เพิ่มบรรทัดนี้เพื่อใช้ themeNotifier และ notificationNotifier
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +23,17 @@ class _LoginPageState extends State<LoginPage> {
     final u = userCtrl.text.trim();
     final p = passCtrl.text;
     if (u == savedU && p == savedP) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => TabMenuPage(username: u, avatarUrl: prefs.getString('profileImageUrl') ?? '')));
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => TabMenuPage(
+            themeNotifier: themeNotifier,
+            notificationNotifier: notificationNotifier,
+            username: u,
+            avatarUrl: prefs.getString('profileImageUrl') ?? '',
+          ),
+        ),
+      );
     } else {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง')));
