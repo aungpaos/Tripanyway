@@ -70,7 +70,7 @@ class _TTcoinTabState extends State<TTcoinTab> {
               child: Column(children: const [
                 Text('ภารกิจ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('ได้รับ TT coin จากการเข้าใกล้สถานี TTcoin'),
+                Text('TTcoin รับได้จากการเข้าใกล้ TT Checkpoint'),
               ]),
             )
           ],

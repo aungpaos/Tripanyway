@@ -14,6 +14,7 @@ dependencies:
   shared_preferences: ^2.3.2
   cupertino_icons: ^1.0.8
   http: ^1.2.0
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -24,3 +25,8 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/coin.png
+    - assets/images/anywaytrip.png
+    - assets/images/icon1.png
+    - assets/images/icon3.png
+    - assets/images/icon4.png
+    - assets/images/icon5.png

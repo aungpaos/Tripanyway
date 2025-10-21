@@ -98,7 +98,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
                 valueListenable: notificationNotifier,
                 builder: (context, enabled, _) {
                   return IconButton(
-                    icon: const Icon(Icons.notifications),
+                    icon: Image.asset('assets/images/icon4.png', width: 24, height: 24),
                     onPressed: () {
                       if (enabled) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,7 +116,7 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
               // ปุ่ม Settings — ส่งทั้ง 2 notifiers ตามที่ SettingsPage ต้องการ
               IconButton(
-                icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.settings, color: Color.fromARGB(255, 188, 240, 180)),
                 onPressed: () {
                   Navigator.push(
                     context,
@@ -139,10 +139,19 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
             selectedItemColor: mainGreen,
             unselectedItemColor: Colors.grey,
             onTap: (i) => setState(() => _currentIndex = i),
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.monetization_on), label: 'TTcoin'),
-              BottomNavigationBarItem(icon: Icon(Icons.local_offer), label: 'Promotion'),
+            items: [
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/images/icon1.png', width: 24, height: 24),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/images/coin.png', width: 24, height: 24),
+                label: 'TTcoin',
+              ),
+              BottomNavigationBarItem(
+                icon: Image.asset('assets/images/icon3.png', width: 24, height: 24),
+                label: 'Promotion',
+              ),
               // Profile tab removed
             ],
           ),
