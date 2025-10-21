@@ -9,14 +9,47 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // ข้อมูลผู้ใช้
-  String firstName = 'พัดชะญีดุย';
-  String lastName = 'เอฟซีนาซ่า';
-  String email = 'somchai.j@example.com';
-  String phone = '081-234-5678';
-  String birthday = '1 มกราคม 1990';
-  String bio = 'นักพัฒนาแอป Flutter ที่ชื่นชอบกาแฟ ☕';
-  final String profileImageUrl = 'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
+  String firstName = '';
+  String lastName = '';
+  String email = '';
+  String phone = '';
+  String birthday = '';
+  String bio = '';
+  String profileImageUrl =
+      'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfileData();
+  }
+
+  // โหลดข้อมูลจาก SharedPreferences
+  Future<void> _loadProfileData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      firstName = prefs.getString('firstName') ?? 'พัดชะญีดุย';
+      lastName = prefs.getString('lastName') ?? 'เอฟซีนาซ่า';
+      email = prefs.getString('email') ?? 'somchai.j@example.com';
+      phone = prefs.getString('phone') ?? '081-234-5678';
+      birthday = prefs.getString('birthday') ?? '1 มกราคม 1990';
+      bio = prefs.getString('bio') ?? 'นักพัฒนาแอป Flutter ที่ชื่นชอบกาแฟ ☕';
+      profileImageUrl = prefs.getString('profileImageUrl') ??
+          'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
+    });
+  }
+
+  // บันทึกข้อมูลลง SharedPreferences
+  Future<void> _saveProfileData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('firstName', firstName);
+    await prefs.setString('lastName', lastName);
+    await prefs.setString('email', email);
+    await prefs.setString('phone', phone);
+    await prefs.setString('birthday', birthday);
+    await prefs.setString('bio', bio);
+    await prefs.setString('profileImageUrl', profileImageUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     phone: phone,
                     birthday: birthday,
                     bio: bio,
+                    profileImageUrl: profileImageUrl,
                   ),
                 ),
               );
@@ -49,7 +83,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   phone = updatedData['phone'];
                   birthday = updatedData['birthday'];
                   bio = updatedData['bio'];
+                  profileImageUrl = updatedData['profileImageUrl'];
                 });
+                await _saveProfileData(); // ✅ บันทึกข้อมูลหลังแก้ไข
               }
             },
           )
@@ -59,7 +95,6 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // รูปโปรไฟล์
             Center(
               child: CircleAvatar(
                 radius: 60,
@@ -67,41 +102,56 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
             const SizedBox(height: 20),
-            // ชื่อเต็ม
             Text(
               '$firstName $lastName',
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style:
+                  const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Text(email, style: TextStyle(fontSize: 16, color: Colors.grey[700])),
-            const SizedBox(height: 16),
-            // ข้อมูลส่วนตัวเพิ่มเติม
-            ProfileInfoRow(label: 'ชื่อ', value: firstName),
-            ProfileInfoRow(label: 'นามสกุล', value: lastName),
-            ProfileInfoRow(label: 'วันเกิด', value: birthday),
-            ProfileInfoRow(label: 'เบอร์โทร', value: phone),
-            const SizedBox(height: 16),
-            Text(
-              bio,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    email,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    phone,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    birthday,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    bio,
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 30),
-            // ปุ่มออกจากระบบ
+            const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () async {
-                // Clear username from SharedPreferences
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('username');
-                // Navigate to LoginPage using named route
-                Navigator.pushReplacementNamed(context, '/login');
-              },
               icon: const Icon(Icons.logout),
               label: const Text('ออกจากระบบ'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 153, 0, 0),
+                backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
               ),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                if (!mounted) return;
+                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+              },
             ),
           ],
         ),
@@ -110,9 +160,35 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 }
 
-// ======================
-// หน้าแก้ไขโปรไฟล์
-// ======================
+class ProfileInfoRow extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const ProfileInfoRow({
+    super.key,
+    required this.label,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Text(
+            '$label: ',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Expanded(
+            child: Text(value),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class EditProfilePage extends StatefulWidget {
   final String firstName;
   final String lastName;
@@ -120,6 +196,7 @@ class EditProfilePage extends StatefulWidget {
   final String phone;
   final String birthday;
   final String bio;
+  final String profileImageUrl;
 
   const EditProfilePage({
     super.key,
@@ -129,6 +206,7 @@ class EditProfilePage extends StatefulWidget {
     required this.phone,
     required this.birthday,
     required this.bio,
+    required this.profileImageUrl,
   });
 
   @override
@@ -142,6 +220,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController phoneController;
   late TextEditingController birthdayController;
   late TextEditingController bioController;
+  late TextEditingController profileImageUrlController;
 
   @override
   void initState() {
@@ -152,6 +231,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     phoneController = TextEditingController(text: widget.phone);
     birthdayController = TextEditingController(text: widget.birthday);
     bioController = TextEditingController(text: widget.bio);
+    profileImageUrlController = TextEditingController(text: widget.profileImageUrl);
   }
 
   @override
@@ -162,6 +242,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     phoneController.dispose();
     birthdayController.dispose();
     bioController.dispose();
+    profileImageUrlController.dispose();
     super.dispose();
   }
 
@@ -169,61 +250,57 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("แก้ไขโปรไฟล์"),
+        title: const Text('แก้ไขโปรไฟล์'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
           children: [
-            TextField(controller: firstNameController, decoration: const InputDecoration(labelText: "ชื่อ")),
-            TextField(controller: lastNameController, decoration: const InputDecoration(labelText: "นามสกุล")),
-            TextField(controller: emailController, decoration: const InputDecoration(labelText: "อีเมล")),
-            TextField(controller: phoneController, decoration: const InputDecoration(labelText: "เบอร์โทร")),
-            TextField(controller: birthdayController, decoration: const InputDecoration(labelText: "วันเกิด")),
+            TextField(
+              controller: firstNameController,
+              decoration: const InputDecoration(labelText: 'ชื่อ'),
+            ),
+            TextField(
+              controller: lastNameController,
+              decoration: const InputDecoration(labelText: 'นามสกุล'),
+            ),
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'อีเมล'),
+            ),
+            TextField(
+              controller: phoneController,
+              decoration: const InputDecoration(labelText: 'เบอร์โทร'),
+            ),
+            TextField(
+              controller: birthdayController,
+              decoration: const InputDecoration(labelText: 'วันเกิด'),
+            ),
             TextField(
               controller: bioController,
-              decoration: const InputDecoration(labelText: "Bio"),
-              maxLines: 3,
+              decoration: const InputDecoration(labelText: 'Bio'),
+            ),
+            TextField(
+              controller: profileImageUrlController,
+              decoration: const InputDecoration(labelText: 'Profile Image URL'),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context, {
-                  "firstName": firstNameController.text,
-                  "lastName": lastNameController.text,
-                  "email": emailController.text,
-                  "phone": phoneController.text,
-                  "birthday": birthdayController.text,
-                  "bio": bioController.text,
+                  'firstName': firstNameController.text,
+                  'lastName': lastNameController.text,
+                  'email': emailController.text,
+                  'phone': phoneController.text,
+                  'birthday': birthdayController.text,
+                  'bio': bioController.text,
+                  'profileImageUrl': profileImageUrlController.text,
                 });
               },
-              child: const Text("บันทึกการแก้ไข"),
+              child: const Text('บันทึก'),
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// ======================
-// Widget แสดงข้อมูลส่วนตัว
-// ======================
-class ProfileInfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const ProfileInfoRow({super.key, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(flex: 3, child: Text(value)),
-        ],
       ),
     );
   }
