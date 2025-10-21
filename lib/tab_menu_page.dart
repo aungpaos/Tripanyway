@@ -168,8 +168,8 @@ final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
                 );
               }
             },
-            icon: const Icon(Icons.bluetooth_searching),
-            label: const Text('Scan & Get TTcoin'),
+            icon: const Icon(Icons.qr_code_scanner),
+            label: const Text('Scan QRcode'),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );

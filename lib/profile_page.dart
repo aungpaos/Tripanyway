@@ -10,19 +10,19 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // ข้อมูลผู้ใช้
-  String firstName = 'สมชาย';
-  String lastName = 'ใจดี';
+  String firstName = 'พัดชะญีดุย';
+  String lastName = 'เอฟซีนาซ่า';
   String email = 'somchai.j@example.com';
   String phone = '081-234-5678';
   String birthday = '1 มกราคม 1990';
   String bio = 'นักพัฒนาแอป Flutter ที่ชื่นชอบกาแฟ ☕';
-  final String profileImageUrl = 'https://i.pravatar.cc/150?img=3';
+  final String profileImageUrl = 'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('โปรไฟล์ของฉัน'),
+        title: const Text('โปรไฟล์'),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
               icon: const Icon(Icons.logout),
               label: const Text('ออกจากระบบ'),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 131, 176, 125 ),
+                backgroundColor: const Color.fromARGB(255, 153, 0, 0),
                 foregroundColor: Colors.white,
               ),
             ),
