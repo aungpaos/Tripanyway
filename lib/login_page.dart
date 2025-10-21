@@ -32,25 +32,64 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // custom UI like before...
-      appBar: AppBar(title: const Text('Anyway Trip')),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(children: [
-          TextField(controller: userCtrl, decoration: const InputDecoration(labelText: 'username')),
-          const SizedBox(height: 8),
-          TextField(controller: passCtrl, obscureText: true, decoration: const InputDecoration(labelText: 'password')),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordPage()));
-            }, child: const Text('Forgot Password?')),
+      body: Stack(
+        children: [
+          // รูปด้านบนซ้าย + ข้อความตัวใหญ่
+          Positioned(
+            top: 72,
+            left: 16,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/anywaytrip.png',
+                  width: 150,
+                  height: 150,
+                ),
+                const SizedBox(width: 16),
+                const Text(
+                  'เที่ยวทั่วทิศ\nAnywayTrip',
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 125, 172, 191),
+                    fontFamily: 'ITIM', // เพิ่มบรรทัดนี้
+                  ),
+                ),
+              ],
+            ),
           ),
-          ElevatedButton(onPressed: _login, child: const Text('confirm')),
-          TextButton(onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpPage()));
-          }, child: const Text('sign up')),
-        ]),
+          // ฟอร์มตรงกลาง
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(controller: userCtrl, decoration: const InputDecoration(labelText: 'username')),
+                  const SizedBox(height: 8),
+                  TextField(controller: passCtrl, obscureText: true, decoration: const InputDecoration(labelText: 'password')),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordPage()));
+                      },
+                      child: const Text('Forgot Password?'),
+                    ),
+                  ),
+                  ElevatedButton(onPressed: _login, child: const Text('confirm')),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpPage()));
+                    },
+                    child: const Text('sign up'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

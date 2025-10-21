@@ -30,3 +30,8 @@ flutter:
     - assets/images/icon3.png
     - assets/images/icon4.png
     - assets/images/icon5.png
+  
+  fonts:
+    - family: ITIM
+      fonts:
+      - asset: assets/fonts/Itim-Regular.ttf
