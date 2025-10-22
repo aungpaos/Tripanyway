@@ -34,7 +34,6 @@ final ThemeData customDarkTheme = ThemeData.dark().copyWith(
     primary: const Color(0xFF7DACBF),
     secondary: const Color(0xFF83B07D),
     surface: const Color(0xFF575C66),
-    background: const Color(0xFF444851),
   ),
   textTheme: ThemeData.dark().textTheme.apply(
     bodyColor: Colors.white,

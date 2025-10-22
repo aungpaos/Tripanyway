@@ -17,20 +17,20 @@ class Promotion {
 // ตัวอย่าง Promotion
 final List<Promotion> _promotions = [
   Promotion(
-      title: "รองเท้าผ้าใบสุดเท่",
-      description: "ดีไซน์ใหม่ล่าสุด ใส่สบายทุกก้าว",
-      price: "1,290",
-      imageUrl: "https://picsum.photos/id/1021/960/540"),
+      title: "หมอนสามเหลี่ยม",
+      description: "นอนสบาย รองรับคอได้ดี",
+      price: "299",
+      imageUrl: "https://dh-media.dohome.technology/article-image/products/10140375/images/191bc887-b57f-4793-af21-e978fd5adedc/10140375_bai_1200_1_3.jpg"),
   Promotion(
-      title: "หูฟังบลูทูธไร้สาย",
-      description: "เสียงคมชัด แบตอึดทนฟังได้ทั้งวัน",
-      price: "890",
-      imageUrl: "https://picsum.photos/id/1031/960/540"),
+      title: "กางเกงช้าง",
+      description: "กางเกงที่มีความเป็นไทยสูง",
+      price: "259",
+      imageUrl: "https://static.amarintv.com/images/upload/editor/source/France-%20Spotlight/istock-1843944148.jpg"),
   Promotion(
-      title: "เสื้อยืดคอตตอนพรีเมียม",
-      description: "เนื้อผ้านุ่ม ใส่สบายทุกโอกาส",
-      price: "350",
-      imageUrl: "https://picsum.photos/id/1041/960/540"),
+      title: "ยาดม",
+      description: "ดมแล้วสดชื่น หายใจโล่ง",
+      price: "49",
+      imageUrl: "https://cr.lnwfile.com/tubkr0.jpg"),
 ];
 
 class PromoFeedPage extends StatefulWidget {
@@ -108,7 +108,7 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color.fromARGB(255, 97, 97, 97)!
+                        ? const Color.fromARGB(255, 97, 97, 97)
                         : const Color.fromARGB(255, 224, 224, 224),
                   ),
                   borderRadius: BorderRadius.circular(10),
