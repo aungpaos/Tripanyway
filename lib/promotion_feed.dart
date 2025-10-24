@@ -31,6 +31,21 @@ final List<Promotion> _promotions = [
       description: "ดมแล้วสดชื่น หายใจโล่ง",
       price: "49",
       imageUrl: "https://cr.lnwfile.com/tubkr0.jpg"),
+  Promotion(
+      title: "ผ้าขาวม้า",
+      description: "ผ้าขาวม้า เฟี้ยวทุกโอกาส",
+      price: "99",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSodzpS-iJzN-utuLNYHC-CJKdp0VzUeCMtw&s"),
+  Promotion(
+      title: "ทุเรียนหมอนทอง",
+      description: "ทุเรียนของแท้ หอมๆ",
+      price: "199",
+      imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIc9igTRyLc4EApsWInzFgDPDO7FJ3NsmvIg&s"),
+  Promotion(
+      title: "กระเป๋าจักสาน",
+      description: "งานแฮนด์เมด ของไทยดั้งเดิม",
+      price: "389",
+      imageUrl: "https://www.otopchiangmai.com/resize.php?src=uploads/1f9179e981a40b71f556df87baf4c6d0.jpg&w=400&h=400&os=1"),
 ];
 
 class PromoFeedPage extends StatefulWidget {
