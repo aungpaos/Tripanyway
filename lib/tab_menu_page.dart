@@ -5,7 +5,7 @@ import 'ttcoin_tab.dart';
 import 'promotion_feed.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
-import 'bluetooth_service.dart'; // ถ้าใช้ปุ่มสแกน BLE (ไม่จำเป็นถ้าไม่มีไฟล์นี้)
+import 'scan_qr_page.dart';
 
 class TabMenuPage extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
@@ -31,8 +31,6 @@ class _TabMenuPageState extends State<TabMenuPage> {
   // avatar local
   late String avatarUrl;
 
-  // (ถ้าคุณมี BluetoothService ให้ uncomment และใช้งาน)
-  final BluetoothServiceHandler _bluetoothService = BluetoothServiceHandler();
 
   @override
   void initState() {
@@ -90,7 +88,7 @@ class _TabMenuPageState extends State<TabMenuPage> {
             ),
             title: const Text(''), // ไม่มีข้อความด้านบนตามที่ขอ
             actions: [
-              // ปุ่มแจ้งเตือน (จะอ่านค่า notificationNotifier ได้)
+              // ปุ่มแจ้งเตือน
               ValueListenableBuilder<bool>(
                 valueListenable: widget.notificationNotifier,
                 builder: (context, enabled, _) {
@@ -110,8 +108,21 @@ class _TabMenuPageState extends State<TabMenuPage> {
                   );
                 },
               ),
-
-              // ปุ่ม Settings — ส่งทั้ง 2 notifiers ตามที่ SettingsPage ต้องการ
+              // ปุ่มสแกน QR
+              IconButton(
+                icon: const Icon(Icons.qr_code_scanner),
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ScanQRPage(username: widget.username),
+                    ),
+                  );
+                  // อัปเดตหน้า TTcoinTab หลังสแกน
+                  if (_currentIndex == 1) setState(() {});
+                },
+              ),
+              // ปุ่ม Settings
               IconButton(
                 icon: const Icon(Icons.settings),
                 onPressed: () {
@@ -150,23 +161,6 @@ class _TabMenuPageState extends State<TabMenuPage> {
               ),
             ],
           ),
-
-          // ถ้าต้องการปุ่มสแกน BLE ให้แสดงปุ่มด้านล่าง (ไม่จำเป็นต้องมี)
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () async {
-              try {
-                await _bluetoothService.connectAndRequestCoin(widget.username);
-                setState(() {});
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('เกิดข้อผิดพลาด BLE: $e')),
-                );
-              }
-            },
-            icon: const Icon(Icons.qr_code_scanner),
-            label: const Text('Scan QRcode'),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         );
       },
     );
