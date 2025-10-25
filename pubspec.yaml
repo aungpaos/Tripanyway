@@ -31,7 +31,7 @@ flutter:
     - assets/images/icon3.png
     - assets/images/icon4.png
     - assets/images/icon5.png
-  
+    - assets/images/IMG_7602.png # ANYWAY-1761228054540-FNGJGWMTG or TTCOIN_759
   fonts:
     - family: ITIM
       fonts:
