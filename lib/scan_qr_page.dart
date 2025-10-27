@@ -45,6 +45,11 @@ class _ScanQRPageState extends State<ScanQRPage> {
         };
 
         if (mounted) {
+          // เพิ่มแจ้งเตือน
+          final notiList = prefs.getStringList('notifications') ?? [];
+          notiList.add('คุณได้รับ TTcoin 759 coins จากภูชี้ฟ้า');
+          await prefs.setStringList('notifications', notiList);
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('รับ TTcoin 759 coins สำเร็จ!')),
           );

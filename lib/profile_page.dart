@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'login_page.dart'; // Import the file where LoginPage is defined
+// import 'login_page.dart'; // Import the file where LoginPage is defined
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -34,7 +34,7 @@ class _ProfilePageState extends State<ProfilePage> {
       email = prefs.getString('email') ?? 'somchai.j@example.com';
       phone = prefs.getString('phone') ?? '081-234-5678';
       birthday = prefs.getString('birthday') ?? '1 มกราคม 1990';
-      bio = prefs.getString('bio') ?? 'นักพัฒนาแอป Flutter ที่ชื่นชอบกาแฟ ☕';
+      bio = prefs.getString('bio') ?? 'AnywayTrip';
       profileImageUrl = prefs.getString('profileImageUrl') ??
           'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
     });
@@ -157,25 +157,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 32),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.logout),
-              label: const Text('ออกจากระบบ'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                foregroundColor: Colors.white,
-                minimumSize: const Size(double.infinity, 48),
-              ),
-              onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.clear();
-                if (!mounted) return;
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (_) => const LoginPage()),
-                  (route) => false,
-                );
-              },
             ),
           ],
         ),

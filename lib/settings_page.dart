@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'login_page.dart'; // Import the file where LoginPage is defined
 
 class SettingsPage extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
@@ -41,16 +43,25 @@ class _SettingsPageState extends State<SettingsPage> {
             },
             secondary: const Icon(Icons.brightness_6),
           ),
-          const SizedBox(height: 10),
-          SwitchListTile(
-            title: const Text("การแจ้งเตือน"),
-            value: isNotificationEnabled,
-            onChanged: (val) {
-              setState(() => isNotificationEnabled = val);
-              widget.notificationNotifier.value = val;
-            },
-            secondary: const Icon(Icons.notifications),
-          ),
+          const SizedBox(height: 32),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.logout),
+              label: const Text('ออกจากระบบ'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                if (!mounted) return;
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
+                  (route) => false,
+                );
+              },
+            ),
         ],
       ),
     );

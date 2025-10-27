@@ -5,6 +5,7 @@ import 'ttcoin_tab.dart';
 import 'promotion_feed.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
+import 'notification_page.dart'; // <-- นำเข้า NotificationPage
 
 class TabMenuPage extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
@@ -88,22 +89,12 @@ class _TabMenuPageState extends State<TabMenuPage> {
             title: const Text(''), // ไม่มีข้อความด้านบนตามที่ขอ
             actions: [
               // ปุ่มแจ้งเตือน
-              ValueListenableBuilder<bool>(
-                valueListenable: widget.notificationNotifier,
-                builder: (context, enabled, _) {
-                  return IconButton(
-                    icon: Image.asset('assets/images/icon4.png', width: 24, height: 24),
-                    onPressed: () {
-                      if (enabled) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('คุณมีการแจ้งเตือนใหม่')),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('การแจ้งเตือนถูกปิด')),
-                        );
-                      }
-                    },
+              IconButton(
+                icon: Image.asset('assets/images/icon4.png', width: 24, height: 24),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NotificationPage()),
                   );
                 },
               ),
