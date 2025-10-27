@@ -134,7 +134,7 @@ class _TabMenuPageState extends State<TabMenuPage> {
             items: [
               BottomNavigationBarItem(
                 icon: Image.asset('assets/images/icon1.png', width: 24, height: 24),
-                label: 'Home',
+                label: 'News',
               ),
               BottomNavigationBarItem(
                 icon: Image.asset('assets/images/coin.png', width: 24, height: 24),

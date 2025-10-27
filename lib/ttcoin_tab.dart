@@ -65,8 +65,8 @@ class _TTcoinTabState extends State<TTcoinTab> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('คุณมี $coins coin', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-                      Text('หรือ $baht บาท', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                      Text('TTcoin', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                      Text('$coins coin ($baht บาท)', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
                     ],
                   )
                 ],
