@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'scan_qr_page.dart';
 
 class TTcoinTab extends StatefulWidget {
@@ -12,11 +13,13 @@ class TTcoinTab extends StatefulWidget {
 
 class _TTcoinTabState extends State<TTcoinTab> {
   int coins = 0;
+  List<Map<String, dynamic>> history = [];
 
   @override
   void initState() {
     super.initState();
     _loadCoins();
+    _loadHistory();
   }
 
   Future<void> _loadCoins() async {
@@ -26,15 +29,33 @@ class _TTcoinTabState extends State<TTcoinTab> {
     });
   }
 
+  Future<void> _loadHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getStringList('ttcoin_history') ?? [];
+    setState(() {
+      history = raw.map((e) => Map<String, dynamic>.from(jsonDecode(e))).toList();
+    });
+  }
+
   Future<void> _scanQR() async {
-    await Navigator.push(
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (_) => ScanQRPage(username: widget.username),
       ),
     );
-    // อัปเดต coin หลังสแกน
-    await _loadCoins();
+    // ถ้ามีผลลัพธ์จากการสแกน ให้บันทึกลง history
+    if (result != null) {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getStringList('ttcoin_history') ?? [];
+      raw.add(jsonEncode(result));
+      await prefs.setStringList('ttcoin_history', raw);
+      await _loadCoins();
+      await _loadHistory();
+    } else {
+      await _loadCoins();
+      await _loadHistory();
+    }
   }
 
   @override
@@ -97,6 +118,23 @@ class _TTcoinTabState extends State<TTcoinTab> {
                 minimumSize: const Size(double.infinity, 48),
               ),
             ),
+            const SizedBox(height: 24),
+            if (history.isNotEmpty)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('ประวัติการรับ TTcoin', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  ...history.reversed.map((item) => Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.qr_code),
+                      title: Text(item['place'] ?? 'ไม่ระบุ'),
+                      subtitle: Text(item['date'] ?? ''),
+                      trailing: Text('+${item['amount']} coin', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+                    ),
+                  )),
+                ],
+              ),
           ],
         ),
       ),
