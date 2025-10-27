@@ -5,7 +5,6 @@ import 'ttcoin_tab.dart';
 import 'promotion_feed.dart';
 import 'profile_page.dart';
 import 'settings_page.dart';
-import 'scan_qr_page.dart';
 
 class TabMenuPage extends StatefulWidget {
   final ValueNotifier<ThemeMode> themeNotifier;
@@ -88,20 +87,6 @@ class _TabMenuPageState extends State<TabMenuPage> {
             ),
             title: const Text(''), // ไม่มีข้อความด้านบนตามที่ขอ
             actions: [
-              // ปุ่มสแกน QR
-              IconButton(
-                icon: const Icon(Icons.qr_code_scanner),
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ScanQRPage(username: widget.username),
-                    ),
-                  );
-                  // อัปเดตหน้า TTcoinTab หลังสแกน
-                  if (_currentIndex == 1) setState(() {});
-                },
-              ),
               // ปุ่มแจ้งเตือน
               ValueListenableBuilder<bool>(
                 valueListenable: widget.notificationNotifier,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'scan_qr_page.dart';
 
 class TTcoinTab extends StatefulWidget {
   final String username;
@@ -23,6 +24,17 @@ class _TTcoinTabState extends State<TTcoinTab> {
     setState(() {
       coins = prefs.getInt('coins') ?? 0;
     });
+  }
+
+  Future<void> _scanQR() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ScanQRPage(username: widget.username),
+      ),
+    );
+    // อัปเดต coin หลังสแกน
+    await _loadCoins();
   }
 
   @override
@@ -65,14 +77,26 @@ class _TTcoinTabState extends State<TTcoinTab> {
             const SizedBox(height: 16),
             Container(
               width: double.infinity,
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(8)),
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade400), 
+              borderRadius: BorderRadius.circular(8)),
               padding: const EdgeInsets.all(16),
               child: Column(children: const [
                 Text('ภารกิจ', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text('TTcoin รับได้จากการเข้าใกล้ TT Checkpoint'),
+                Text('TTcoin รับได้จากการสแกน TT Checkpoint'),
               ]),
-            )
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.qr_code_scanner),
+              label: const Text('สแกน QR รับ TTcoin'),
+              onPressed: _scanQR,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+            ),
           ],
         ),
       ),
