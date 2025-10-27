@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Promotion {
   final String title;
@@ -45,7 +46,7 @@ final List<Promotion> _promotions = [
       title: "กระเป๋าจักสาน",
       description: "งานแฮนด์เมด ของไทยดั้งเดิม",
       price: "389",
-      imageUrl: "https://www.otopchiangmai.com/resize.php?src=uploads/1f9179e981a40b71f556df87baf4c6d0.jpg&w=400&h=400&os=1"),
+      imageUrl: "https://inwfile.com/s-fr/qcuogp.jpg"),
 ];
 
 class PromoFeedPage extends StatefulWidget {
@@ -58,6 +59,8 @@ class PromoFeedPage extends StatefulWidget {
 class _PromoFeedPageState extends State<PromoFeedPage> {
   late TextEditingController _searchController;
   List<Promotion> _filteredPromotions = [];
+  Set<String> _purchased = {};
+  int coins = 0;
 
   @override
   void initState() {
@@ -65,6 +68,80 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
     _searchController = TextEditingController();
     _filteredPromotions = List<Promotion>.from(_promotions);
     _searchController.addListener(_onSearchChanged);
+    _loadPurchased();
+    _loadCoins();
+  }
+
+  Future<void> _loadPurchased() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _purchased = (prefs.getStringList('purchased_promotions') ?? []).toSet();
+    });
+  }
+
+  Future<void> _loadCoins() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      coins = prefs.getInt('coins') ?? 0;
+    });
+  }
+
+  Future<void> _buyPromotion(Promotion promo) async {
+    final priceBaht = int.tryParse(promo.price) ?? 0;
+    final priceCoin = priceBaht * 75; // 1 บาท = 75 TTcoin
+    if (_purchased.contains(promo.title)) return;
+    if (coins < priceCoin) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('TTcoin ไม่พอสำหรับการซื้อ')),
+      );
+      return;
+    }
+    final prefs = await SharedPreferences.getInstance();
+    // หัก coin ตามราคาสินค้า
+    await prefs.setInt('coins', coins - priceCoin);
+    // เพิ่มชื่อสินค้าที่ซื้อแล้ว
+    final purchased = (prefs.getStringList('purchased_promotions') ?? []);
+    purchased.add(promo.title);
+    await prefs.setStringList('purchased_promotions', purchased);
+    // เพิ่มแจ้งเตือน
+    final notiList = prefs.getStringList('notifications') ?? [];
+    notiList.add('คุณได้ซื้อ "${promo.title}" แล้ว');
+    await prefs.setStringList('notifications', notiList);
+
+    // รีเฟรช coins จาก SharedPreferences
+    await _loadCoins();
+
+    setState(() {
+      _purchased.add(promo.title);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('ซื้อ "${promo.title}" สำเร็จ!')),
+    );
+  }
+
+  Future<void> _confirmBuyPromotion(Promotion promo) async {
+    final priceBaht = int.tryParse(promo.price) ?? 0;
+    final priceCoin = priceBaht * 75;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('ยืนยันการซื้อ'),
+        content: Text('คุณต้องการซื้อ "${promo.title}" ในราคา ${promo.price} บาท หรือไม่?'),
+        actions: [
+          TextButton(
+            child: const Text('ยกเลิก'),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          ElevatedButton(
+            child: const Text('ยืนยัน'),
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      ),
+    );
+    if (result == true) {
+      await _buyPromotion(promo);
+    }
   }
 
   @override
@@ -94,6 +171,9 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
 
   @override
   Widget build(BuildContext context) {
+    // คำนวณจำนวนเงินบาทจาก TTcoin
+    final int baht = (coins / 75).floor();
+
     return Column(
       children: [
         Padding(
@@ -112,11 +192,22 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: Row(
+            children: [
+              Image.asset('assets/images/coin.png', width: 24, height: 24),
+              const SizedBox(width: 8),
+              Text('ยอดเงินของคุณ: $baht บาท', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ),
         Expanded(
           child: ListView.builder(
             itemCount: _filteredPromotions.length,
             itemBuilder: (context, index) {
               final promo = _filteredPromotions[index];
+              final isPurchased = _purchased.contains(promo.title);
               return Container(
                 height: 120,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -127,7 +218,7 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
                         : const Color.fromARGB(255, 224, 224, 224),
                   ),
                   borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).cardColor, // ใช้สีตามธีม
+                  color: Theme.of(context).cardColor,
                   boxShadow: [
                     BoxShadow(
                       color: Theme.of(context).brightness == Brightness.dark
@@ -173,11 +264,32 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
                             overflow: TextOverflow.ellipsis,
                           ),
                           const SizedBox(height: 6),
-                          Text("ราคา: ${promo.price} บาท",
-                              style: const TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold)),
+                          isPurchased
+                              ? const Text("ซื้อแล้ว",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.green,
+                                      fontWeight: FontWeight.bold))
+                              : Text("ราคา: ${promo.price} บาท",
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold)),
                         ],
                       ),
-                    )
+                    ),
+                    if (!isPurchased)
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: ElevatedButton(
+                          onPressed: () => _confirmBuyPromotion(promo),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('ซื้อ'),
+                        ),
+                      ),
                   ],
                 ),
               );

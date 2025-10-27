@@ -22,6 +22,12 @@ class _TTcoinTabState extends State<TTcoinTab> {
     _loadHistory();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadCoins(); // รีเฟรช coin ทุกครั้งที่กลับมาหน้านี้
+  }
+
   Future<void> _loadCoins() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -114,6 +120,21 @@ class _TTcoinTabState extends State<TTcoinTab> {
               onPressed: _scanQR,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(double.infinity, 48),
+              ),
+            ),
+            const SizedBox(height: 8),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text('เติม TTcoin (สำหรับทดสอบ)'),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setInt('coins', coins + 1000); // เพิ่ม 1000 coin
+                await _loadCoins();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blueGrey,
                 foregroundColor: Colors.white,
                 minimumSize: const Size(double.infinity, 48),
               ),
