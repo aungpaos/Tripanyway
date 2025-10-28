@@ -1,6 +1,6 @@
-# flutter_profile
+# My school project
 
-A new Flutter project.
+This is my school project. There is nothing interesting here.
 
 ## Getting Started
 
