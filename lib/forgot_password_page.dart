@@ -24,7 +24,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('ส่ง OTP ไปที่เบอร์ ${_phoneController.text} แล้ว')),
+      SnackBar(content: Text('ส่ง OTP ไปที่ ${_phoneController.text} แล้ว')),
     );
   }
 

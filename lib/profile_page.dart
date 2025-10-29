@@ -18,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String bio = '';
   String profileImageUrl =
       'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
+  String address = '';
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
       bio = prefs.getString('bio') ?? 'AnywayTrip';
       profileImageUrl = prefs.getString('profileImageUrl') ??
           'https://docs.flutter.dev/assets/images/flutter-logo-sharing.png';
+      address = prefs.getString('address') ?? 'กรุงเทพมหานคร';
     });
   }
 
@@ -50,6 +52,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await prefs.setString('birthday', birthday);
     await prefs.setString('bio', bio);
     await prefs.setString('profileImageUrl', profileImageUrl);
+    await prefs.setString('address', address);
   }
 
   @override
@@ -72,6 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     birthday: birthday,
                     bio: bio,
                     profileImageUrl: profileImageUrl,
+                    address: address,
                   ),
                 ),
               );
@@ -85,6 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   birthday = updatedData['birthday'];
                   bio = updatedData['bio'];
                   profileImageUrl = updatedData['profileImageUrl'];
+                  address = updatedData['address'];
                 });
                 await _saveProfileData(); // ✅ บันทึกข้อมูลหลังแก้ไข
               }
@@ -155,6 +160,17 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     textAlign: TextAlign.center,
                   ),
+                  const SizedBox(height: 8),
+                  Text(
+                    address,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.grey[700],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
@@ -202,6 +218,7 @@ class EditProfilePage extends StatefulWidget {
   final String birthday;
   final String bio;
   final String profileImageUrl;
+  final String address;
 
   const EditProfilePage({
     super.key,
@@ -212,6 +229,7 @@ class EditProfilePage extends StatefulWidget {
     required this.birthday,
     required this.bio,
     required this.profileImageUrl,
+    required this.address,
   });
 
   @override
@@ -226,6 +244,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController birthdayController;
   late TextEditingController bioController;
   late TextEditingController profileImageUrlController;
+  late TextEditingController addressController;
 
   @override
   void initState() {
@@ -237,6 +256,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     birthdayController = TextEditingController(text: widget.birthday);
     bioController = TextEditingController(text: widget.bio);
     profileImageUrlController = TextEditingController(text: widget.profileImageUrl);
+    addressController = TextEditingController(text: widget.address);
   }
 
   @override
@@ -248,6 +268,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     birthdayController.dispose();
     bioController.dispose();
     profileImageUrlController.dispose();
+    addressController.dispose();
     super.dispose();
   }
 
@@ -289,6 +310,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               controller: profileImageUrlController,
               decoration: const InputDecoration(labelText: 'Profile Image URL'),
             ),
+            TextField(
+              controller: addressController,
+              decoration: const InputDecoration(labelText: 'ที่อยู่'),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
@@ -300,6 +325,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   'birthday': birthdayController.text,
                   'bio': bioController.text,
                   'profileImageUrl': profileImageUrlController.text,
+                  'address': addressController.text,
                 });
               },
               child: const Text('บันทึก'),
