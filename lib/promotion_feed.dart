@@ -128,13 +128,21 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
         title: Text('ยืนยันการซื้อ'),
         content: Text('คุณต้องการซื้อ "${promo.title}" ในราคา ${promo.price} บาท หรือไม่?'),
         actions: [
-          TextButton(
+          ElevatedButton(
             child: const Text('ยกเลิก'),
             onPressed: () => Navigator.pop(context, false),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
           ),
           ElevatedButton(
             child: const Text('ยืนยัน'),
             onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+              foregroundColor: Colors.white,
+            ),
           ),
         ],
       ),
@@ -209,7 +217,6 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
               final promo = _filteredPromotions[index];
               final isPurchased = _purchased.contains(promo.title);
               return Container(
-                height: 120,
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   border: Border.all(

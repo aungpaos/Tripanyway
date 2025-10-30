@@ -329,6 +329,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 });
               },
               child: const Text('บันทึก'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                foregroundColor: Colors.white,
+            ),
             ),
           ],
         ),
