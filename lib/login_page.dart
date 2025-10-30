@@ -87,14 +87,28 @@ class _LoginPageState extends State<LoginPage> {
                         Navigator.push(context, MaterialPageRoute(builder: (_) => const ForgotPasswordPage()));
                       },
                       child: const Text('Forgot Password?'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: const Color.fromARGB(255, 131, 176, 125),
+                      ),
                     ),
                   ),
-                  ElevatedButton(onPressed: _login, child: const Text('confirm')),
-                  TextButton(
+                  ElevatedButton(
+                    onPressed: _login, 
+                    child: const Text('confirm'),
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                    foregroundColor: Colors.white,
+                    ),
+                  ),
+                  ElevatedButton(
                     onPressed: () {
                       Navigator.push(context, MaterialPageRoute(builder: (_) => const SignUpPage()));
                     },
                     child: const Text('sign up'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                      foregroundColor: Colors.white,
+                    ),
                   ),
                 ],
               ),

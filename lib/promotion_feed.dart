@@ -120,8 +120,6 @@ class _PromoFeedPageState extends State<PromoFeedPage> {
   }
 
   Future<void> _confirmBuyPromotion(Promotion promo) async {
-    final priceBaht = int.tryParse(promo.price) ?? 0;
-    final priceCoin = priceBaht * 75;
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

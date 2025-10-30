@@ -86,7 +86,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ElevatedButton(
                   onPressed: _sendOtp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: const Color.fromARGB(255, 131, 176, 125),
                     foregroundColor: Colors.white,
                   ),
                   child: const Text("ส่ง OTP"),
@@ -106,7 +106,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ElevatedButton(
                   onPressed: _verifyOtp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: const Color.fromARGB(255, 131, 176, 125),
                     foregroundColor: Colors.white,
                   ),
                   child: const Text("ยืนยัน OTP"),
@@ -126,7 +126,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 ElevatedButton(
                   onPressed: _saveNewPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: const Color.fromARGB(255, 131, 176, 125),
                     foregroundColor: Colors.white,
                   ),
                   child: const Text("บันทึกรหัสผ่านใหม่"),

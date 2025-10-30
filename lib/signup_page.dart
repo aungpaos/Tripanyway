@@ -17,7 +17,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final p = passCtrl.text;
     if (u.isEmpty || p.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกข้อมูล')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('กรุณากรอกข้อมูลให้ครบถ้วน')));
       return;
     }
     setState(() => _saving = true);
@@ -75,6 +75,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   ElevatedButton(
                     onPressed: _saving ? null : _signUp,
                     child: _saving ? const CircularProgressIndicator() : const Text('Sign Up'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 131, 176, 125),
+                      foregroundColor: Colors.white,
+                    ),
                   )
                 ],
               ),
