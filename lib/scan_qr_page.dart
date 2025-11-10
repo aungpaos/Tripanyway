@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class ScanQRPage extends StatefulWidget {
   final String username;
@@ -19,9 +20,23 @@ class _ScanQRPageState extends State<ScanQRPage> {
 
     final prefs = await SharedPreferences.getInstance();
 
-    // ตัวอย่าง: QR "ANYWAY-1761228054540-FNGJGWMTG" = สถานที่ "TT Checkpoint #1", จำนวน 759
-    if (qr == "ANYWAY-1761228054540-FNGJGWMTG") {
-      final alreadyScanned = prefs.getBool('scanned_ANYWAY-1761228054540-FNGJGWMTG') ?? false;
+    // รูปแบบ: ANY-(เลขTTcoin)-(Base64สถานที่)-(random)
+    final regExp = RegExp(r'^ANYWAY-(\d+)-([A-Za-z0-9+/=]+)-([A-Za-z0-9]+)$');
+    final match = regExp.firstMatch(qr);
+
+    if (match != null) {
+      final coinStr = match.group(1) ?? '0';
+      int coinAmount = int.tryParse(coinStr) ?? 0;
+
+      final placeBase64 = match.group(2) ?? '';
+      String placeName = '';
+      try {
+        placeName = utf8.decode(base64Decode(placeBase64));
+      } catch (_) {
+        placeName = '[decode error]';
+      }
+
+      final alreadyScanned = prefs.getBool('scanned_$qr') ?? false;
       if (alreadyScanned) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -33,25 +48,25 @@ class _ScanQRPageState extends State<ScanQRPage> {
         });
       } else {
         int coins = prefs.getInt('coins') ?? 0;
-        await prefs.setInt('coins', coins + 759);
-        await prefs.setBool('scanned_ANYWAY-1761228054540-FNGJGWMTG', true);
+        await prefs.setInt('coins', coins + coinAmount);
+        await prefs.setBool('scanned_$qr', true);
 
         // สร้างข้อมูลประวัติ
         final now = DateTime.now();
         final historyItem = {
           'date': '${now.day}/${now.month}/${now.year} ${now.hour}:${now.minute}',
-          'place': 'ภูชี้ฟ้า',
-          'amount': 759,
+          'place': placeName,
+          'amount': coinAmount,
         };
 
         if (mounted) {
           // เพิ่มแจ้งเตือน
           final notiList = prefs.getStringList('notifications') ?? [];
-          notiList.add('คุณได้รับ TTcoin 759 coins จากภูชี้ฟ้า');
+          notiList.add('คุณได้รับ TTcoin $coinAmount coins จาก $placeName');
           await prefs.setStringList('notifications', notiList);
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('รับ TTcoin 759 coins สำเร็จ!')),
+            SnackBar(content: Text('รับ TTcoin $coinAmount coins จาก $placeName สำเร็จ!')),
           );
         }
         Future.delayed(const Duration(milliseconds: 500), () {
