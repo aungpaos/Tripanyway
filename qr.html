@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ระบบจัดการ QR Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+
+  <div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-6 text-white shadow-xl">
+        <div class="flex items-center gap-3 mb-2">
+          <span>📱</span>
+          <h2 class="text-3xl font-bold">ระบบจัดการ QR Code</h2>
+        </div>
+        <p class="text-indigo-100">สร้างและจัดการ QR Code สำหรับรับคะแนน TT Coin</p>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Create Form -->
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">➕ สร้าง QR Code ใหม่</h3>
+        <form id="qrForm" class="space-y-4">
+          <div>
+            <label for="location" class="block font-semibold mb-1">สถานที่ติดตั้ง *</label>
+            <input id="location" type="text" class="w-full border rounded-lg p-2" placeholder="เช่น: ชายหาดป่าตอง" required />
+          </div>
+
+          <div>
+            <label for="description" class="block font-semibold mb-1">รายละเอียด</label>
+            <input id="description" type="text" class="w-full border rounded-lg p-2" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)" />
+          </div>
+
+          <div>
+            <label for="coins" class="block font-semibold mb-1">คะแนนที่ได้รับ</label>
+            <input id="coins" type="number" class="w-full border rounded-lg p-2" value="499" min="1" />
+            <p class="text-xs text-gray-500">ค่าเริ่มต้น: 499 coin (≈ 6.65 บาท)</p>
+          </div>
+
+          <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+            สร้าง QR Code
+          </button>
+        </form>
+      </div>
+
+      <!-- QR Code List -->
+      <div class="bg-white p-6 rounded-xl shadow-md">
+        <h3 class="text-xl font-bold mb-4">📋 QR Code ทั้งหมด</h3>
+        <div id="qrList" class="space-y-3 max-h-[500px] overflow-y-auto">
+          <p class="text-gray-500 text-center">ยังไม่มี QR Code</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="bg-white p-6 rounded-xl shadow-md mt-6">
+      <h3 class="text-xl font-bold mb-4">🧭 วิธีใช้งาน</h3>
+      <ol class="list-decimal pl-6 space-y-2">
+        <li>กรอกข้อมูลแล้วกด “สร้าง QR Code”</li>
+        <li>กด “ดาวน์โหลด” เพื่อบันทึกภาพ QR</li>
+        <li>นำ QR ไปแสดงผลหรือพิมพ์บนอุปกรณ์</li>
+        <li>ผู้ใช้สแกน QR เพื่อรับคะแนน TT Coin</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("qrForm");
+    const qrList = document.getElementById("qrList");
+
+    let qrCodes = JSON.parse(localStorage.getItem("qrCodes") || "[]");
+
+    function saveToLocal() {
+      localStorage.setItem("qrCodes", JSON.stringify(qrCodes));
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const location = document.getElementById("location").value.trim();
+      const description = document.getElementById("description").value.trim();
+      const coins = parseInt(document.getElementById("coins").value) || 499;
+
+      if (!location) {
+        alert("กรุณากรอกสถานที่");
+        return;
+      }
+
+      // encode สถานที่เป็น base64
+      const locationBase64 = btoa(unescape(encodeURIComponent(location)));
+      const randomStr = Math.random().toString(36).substr(2, 5).toUpperCase();
+      const code = `ANYWAY-${coins}-${locationBase64}-${randomStr}`;
+
+      const qrData = {
+        id: Date.now(),
+        location,
+        description,
+        coins,
+        code,
+        isActive: true,
+        scanCount: 0
+      };
+
+      qrCodes.push(qrData);
+      saveToLocal();
+      renderQRList();
+      form.reset();
+      alert("✅ สร้าง QR Code สำเร็จ!");
+    });
+
+    function renderQRList() {
+      if (qrCodes.length === 0) {
+        qrList.innerHTML = `<p class="text-gray-500 text-center">ยังไม่มี QR Code</p>`;
+        return;
+      }
+
+      qrList.innerHTML = qrCodes.map(qr => `
+        <div class="p-4 border rounded-lg ${qr.isActive ? 'bg-white' : 'bg-gray-100 opacity-60'}">
+          <div class="flex justify-between items-start mb-2">
+            <div>
+              <h4 class="font-bold text-lg">${qr.location}</h4>
+              <p class="text-sm text-gray-600">${qr.description || ''}</p>
+            </div>
+            <span class="text-sm px-2 py-1 rounded ${qr.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-200'}">
+              ${qr.isActive ? 'ใช้งาน' : 'ปิด'}
+            </span>
+          </div>
+          <div class="flex gap-2 mb-2">
+            <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded">${qr.coins} coin</span>
+            <span class="border px-2 py-1 rounded text-sm">สแกนแล้ว ${qr.scanCount} ครั้ง</span>
+          </div>
+          <div class="flex gap-2 items-center mb-3">
+            <code class="bg-gray-100 px-2 py-1 rounded flex-1 text-xs">${qr.code}</code>
+            <button onclick="copyCode('${qr.code}')" class="text-blue-600 hover:text-blue-800 text-sm">คัดลอก</button>
+          </div>
+          <div id="qrcode-${qr.id}" class="mb-3 flex justify-center"></div>
+          <div class="flex gap-2">
+            <button onclick="downloadQRCode(${qr.id})" class="flex-1 bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700">ดาวน์โหลด</button>
+            <button onclick="toggleQR(${qr.id})" class="border px-2 py-1 rounded text-sm">${qr.isActive ? 'ปิด' : 'เปิด'}</button>
+            <button onclick="deleteQR(${qr.id})" class="border px-2 py-1 rounded text-red-600 text-sm">ลบ</button>
+          </div>
+        </div>
+      `).join("");
+
+      // สร้าง QR จริงด้วย qrcode.js
+      qrCodes.forEach(qr => {
+        const qrContainer = document.getElementById(`qrcode-${qr.id}`);
+        if (qrContainer && qrContainer.childElementCount === 0) {
+          new QRCode(qrContainer, {
+            text: qr.code,
+            width: 120,
+            height: 120
+          });
+        }
+      });
+    }
+
+    function copyCode(code) {
+      navigator.clipboard.writeText(code);
+      alert("📋 คัดลอกแล้ว: " + code);
+    }
+
+    function toggleQR(id) {
+      const qr = qrCodes.find(q => q.id === id);
+      qr.isActive = !qr.isActive;
+      saveToLocal();
+      renderQRList();
+    }
+
+    function deleteQR(id) {
+      if (confirm("ต้องการลบ QR Code นี้หรือไม่?")) {
+        qrCodes = qrCodes.filter(q => q.id !== id);
+        saveToLocal();
+        renderQRList();
+      }
+    }
+
+    function downloadQRCode(id) {
+      const qrContainer = document.getElementById(`qrcode-${id}`);
+      const img = qrContainer.querySelector("img") || qrContainer.querySelector("canvas");
+      const qr = qrCodes.find(q => q.id === id);
+      const link = document.createElement("a");
+      link.download = `QR-${qr.location}-${qr.code}.png`;
+      link.href = img.src || img.toDataURL();
+      link.click();
+    }
+
+    // โหลดตอนเปิดเว็บ
+    renderQRList();
+  </script>
+
+</body>
+</html>
